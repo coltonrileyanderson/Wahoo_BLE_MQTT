@@ -2,11 +2,13 @@ const BluetoothConnect = () => {
    // Discovering bluetooth devices MUST be triggered by a user gesture for security
    connect.addEventListener('pointerup', function(event) {
     navigator.bluetooth.requestDevice({
-      filters: [{
-        namePrefix: 'Wahoo'
-      }],
+      // filters: [{
+      //   namePrefix: 'Wahoo'
+      // }],
+      acceptAllDevices: true,
       optionalServices: [
-        '0000180a-0000-1000-8000-00805f9b34fb', //Device Information
+        '0000180a-0000-1000-8000-00805f9b34fb', // Device Information
+        '00001814-0000-1000-8000-00805f9b34fb', // Running Speed & Cadence
         '00001816-0000-1000-8000-00805f9b34fb', // Cycling Speed & Cadence
         '00001818-0000-1000-8000-00805f9b34fb', // Cycling Power
         '00001826-0000-1000-8000-00805f9b34fb', // Fitness Machine
@@ -42,7 +44,7 @@ const BluetoothConnect = () => {
                         // const instant_cadence 
                         // const instant_speed
                         instant_power_data.innerHTML = `${instant_power} watts`
-                        console.log("Cycling Power", event.target.value.getUint16(0), flagsString, flagsString1, flagsString2,instant_power ) 
+                        console.log("Cycling Power", flagsString, dec2bin(event.target.value.getUint16(1)),instant_power); 
                       });
                     });
                   });
