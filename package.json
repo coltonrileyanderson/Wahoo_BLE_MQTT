@@ -1,0 +1,16 @@
+{
+  "name": "mqtt-nodejs-server",
+  "version": "1.0.0",
+  "description": "MQTT Node.js Server",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Colton Anderson",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mqtt": "^4.3.7"
+  }
+}
