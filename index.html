@@ -1,5 +1,53 @@
 <html>
   <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    <script type="text/javascript" language="javascript">
+      var mqtt;
+      var reconnectTimeout = 2000;
+      //var host = "169.254.53.55" //eth0
+      var host = "192.168.254.22" //python
+      var port = 1883;
+      var topic = "org.teamtibco.bikesensor.rawdata";
+
+      function onConnect() {
+        //once connect, make sub and send a message
+
+        console.log("onConnect: Connected");
+
+        mqtt.subscribe(topic);
+
+        message = new Paho.MQTT.Message("Hello World");
+        message.destinationName = topic;
+        //message.destinationName = "#";
+        mqtt.send(message);
+
+        console.log(`onConnect: sent ${message}`);
+      }
+
+      function onFailure() {
+        console.log("Connection Attempt to " + host + " failed. ");
+        setTimeout(MQTTConnect, reconnectTimeout);
+      }
+
+      function MQTTConnect() {
+        console.log("MQTTConnect: to " + host + ":" + port);
+
+        mqtt = new Paho.MQTT.Client(host, port, '', "clientjs");
+
+        var options = {
+          timeout: 3,
+          onSuccess: onConnect,
+          onFailure: onFailure,
+          hosts: [host],
+          ports: [port],
+          
+        };
+
+        mqtt.connect(options);
+        console.log("MQTTConnect: Called Connect");
+      }
+      
+    </script>
   </head>
 
   <body>
@@ -11,6 +59,8 @@
     <h1 id="instant_power_heading"></h1>
 
     <script>
+      console.log("Attempting MQTT");
+      MQTTConnect();
       // Discovering bluetooth devices MUST be triggered by a user gesture for security
       connect.addEventListener('pointerup', function(event) {
         //navigator.bluetooth.requestDevice({ filters: [{ services: ['battery_service'] }] })
@@ -30,7 +80,8 @@
         .then(server => {
           return Promise.all([
             getDeviceInformation(server),
-            server.getPrimaryService('00001818-0000-1000-8000-00805f9b34fb') // Cycling Speed & Cadence
+            //server.getPrimaryService('00001816-0000-1000-8000-00805f9b34fb') // Cycling Speed & Cadence
+            server.getPrimaryService('00001818-0000-1000-8000-00805f9b34fb') // Cycling Power
               .then(service => {
                 return Promise.all([
                 
@@ -52,9 +103,15 @@
                           characteristic.addEventListener('characteristicvaluechanged', (event) => {
                             const flagsString = dec2bin(event.target.value.getUint16(0));
                             const instant_power = event.target.value.getInt16(2, true)  // Resolution is 1 watts
-                            
+                            // const instant_cadence 
+                            // const instant_speed
+
                             instant_power_heading.innerHTML = `${instant_power} watts`
                             console.log("Cycling Power", flagsString, instant_power ) 
+
+                            // message_power = new Paho.MQTT.Message(`${instant_power}`);
+                            // message_power.destinationName = "#";
+                            // mqtt.send(message_power);
                           });
                         });
                       });
