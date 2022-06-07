@@ -6,8 +6,8 @@ We didn't get that close, but the hope was to tie this in with WebSockets to inc
 
 # Getting started
 
-1. Start a web server, e.g. with `python -m SimpleHTTPServer 5000`
-2. Visit the page: http://localhost:5000
+1. Start a web server, e.g. with `python3 -m http.server 9000`
+2. Visit the page: http://localhost:9000
 3. Click "Connect", and find your Wahoo Kickr
 4. See your instantaneous power reading
 5. Check the console for additional information and debugging logs
